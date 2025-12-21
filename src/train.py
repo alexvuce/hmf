@@ -28,8 +28,9 @@ def train(
 
       for batch_idx, (i, j, y) in enumerate(train_oader, start=1):
           i = i.to(device, non_blocking=True) # ***
-          j = j.to(device, non_blockin=gTrue) # ***
+          j = j.to(device, non_blocking=True) # ***
           y = y.to(device, non_blocking=True) # ***        
 
           optimizer.zero_grad(set_to_none=True) # ***
     
+
