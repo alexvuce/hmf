@@ -33,10 +33,6 @@ def load_data(csv_path: str):
 
     return interactions, num_m, num_n
 
-# split data here
-def split_data():
-    pass
-
 
 def build_dict(interactions):
     D = defaultdict(set)
@@ -57,8 +53,7 @@ class InteractionDataset(Dataset):
         return self.interactions[idx]
 
 
-def classification_collate_fn(batch, D, num_n):
-    
+def collate_fn(batch, D, num_n, negatives):    
     U_, A = zip(*batch)
 
     U, S, y = [], [], []
@@ -68,26 +63,17 @@ def classification_collate_fn(batch, D, num_n):
         S.append(a)
         y.append(1)
 
-        while True:
-            b_ = randint(0, num_n - 1)
-            if b_ not in D[u]:
-                U.append(u)
-                S.append(b_)
-                y.append(0)
-                break
+        for _ in range(negatives):
+            while True:
+                b_ = randint(0, num_n - 1)
+                if b_ not in D[u]:
+                    U.append(u)
+                    S.append(b_)
+                    y.append(0)
+                    break
 
     return (
         torch.tensor(U, dtype=torch.long),
         torch.tensor(S, dtype=torch.long),
         torch.tensor(y, dtype=torch.float),
     )
-
-
-# safe binary auc
-def split_data():
-    pass
-
-
-# loss function
-def split_data():
-    pass
