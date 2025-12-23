@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from random import randint
 from torch.utils.data import DataLoader, Dataset
+import torch
+from torch.nn.functional import binary_cross_entropy_with_logits
 
 
 def load_data(csv_path: str):
@@ -77,3 +79,22 @@ def collate_fn(batch, D, num_n, negatives):
         torch.tensor(S, dtype=torch.long),
         torch.tensor(y, dtype=torch.float),
     )
+
+
+def regularized_loss(
+    logits: torch.Tensor, 
+    target: torch.Tensor, 
+    U: torch.nn.Parameter,
+    V: torch.nn.Parameter,
+    device: torch.device,
+    k: int, 
+    lambda_: float = 1e-5
+): 
+    loss = binary_cross_entropy_with_logits(logits, target)
+
+    eye = torch.eye(k, device=device) 
+    U_l = torch.norm(U.t() @ U - eye, p='fro')
+    V_l = torch.norm(V.t() @ V - eye, p='fro')
+    regularizer = lambda_ * (U_l + V_l)
+
+    return loss, regularizer
