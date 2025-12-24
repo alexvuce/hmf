@@ -1,10 +1,41 @@
 from collections import defaultdict
 import numpy as np
 import pandas as pd
-from random import randint
-from torch.utils.data import DataLoader, Dataset
+from random import sample, randint
 import torch
 from torch.nn.functional import binary_cross_entropy_with_logits
+from torch.utils.data import DataLoader, Dataset
+
+
+def make_interactions(
+    m: int = 1_000_000, 
+    n: int = 1_000, 
+    max_j_per_i: int = 4
+):
+    interactions = []
+
+    for i in range(m):
+        for j in sample(range(n), randint(1, max_j_per_i)):
+            interactions.append([i, j])
+
+    return interactions
+
+def make_interactions_train_test(
+    m: int = 1_000_000, 
+    n: int = 1_000, 
+    max_j_per_i: int = 4
+):
+    m_split = m // 2; n_split = n // 2
+    interactions_train, interactions_test = [], []
+    
+    for i in range(m):
+        for j in sample(range(n), randint(1, max_j_per_i)):
+            if i <= m_split or j <= n_split:                    
+                interactions_train.append([i, j])
+            else: 
+                interactions_test.append([i, j])
+
+    return (interactions_train, interactions_test)
 
 
 def load_data(csv_path: str):
