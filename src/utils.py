@@ -67,10 +67,12 @@ def load_data(csv_path: str):
     return interactions, num_m, num_n
 
 
-def build_dict(interactions):
+def build_dictionary(interactions_list: list):
     D = defaultdict(set)
-    for u, v in interactions:
-        D[u].add(v)
+
+    for i_list in interactions_list: 
+        for i, j in i_list:
+            D[i].add(j)
     
     return D
 
