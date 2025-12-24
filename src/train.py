@@ -6,18 +6,18 @@ from sklearn.metrics import roc_auc_score, accuracy_score, classification_report
 
 
 def instantiate_model(
-    '''
-    model_class: model from models.py
-    I: number of rows in latent matrix U
-    J: number of rows in latent matrix V
-    k: latent dimsneion size; number of columns in {U, V}
-    '''
     model_class: torch.nn.Module,
     I: int,
     J: int, 
     k: int,
     device: torch.device
 ):
+    '''
+    model_class: model from models.py
+    I: number of rows in latent matrix U
+    J: number of rows in latent matrix V
+    k: latent dimsneion size; number of columns in {U, V}
+    '''
     return model_class(I, J, k).to(device)
 
 def train(

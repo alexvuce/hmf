@@ -14,16 +14,16 @@ def load_data(csv_path: str):
         - coords: numpy array of shape (_, _) with integer-coded (_, ...)
         - num_...: int
     """
-    df = pd.read_csv(csv_path, encoding-'utf-16', sep=',')
+    df = pd.read_csv(csv_path, encoding='utf-16', sep=',')
     print(f'There are {len(df)} _-_ pairs.') # co-occurrences
 
     # Build integer encodings
-    us = sorted(df.iloc[:, 0].unique().tolist()])
-    vs = sorted(df.iloc[:, 1].unique().tolist()])
+    us = sorted(df.iloc[:, 0].unique().tolist())
+    vs = sorted(df.iloc[:, 1].unique().tolist())
     us2ix = {u: i for i, u in enumerate(us)}
     vs2ix = {v: j for j, v in enumerate(us)}
     num_m = len(us2ix); num_n = len(vs2ix)
-    print(f'There are {num_m} m and {num_n)} n')
+    print(f'There are {num_m} m and {num_n} n')
 
     # Map to ints
     df.iloc[:, 0] = df.iloc[:, 0].map(us2ix).astype('int64')
@@ -97,4 +97,4 @@ def regularized_loss(
     V_l = torch.norm(V.t() @ V - eye, p='fro')
     regularizer = lambda_ * (U_l + V_l)
 
-    return loss, regularizer
+    return (loss, regularizer)
