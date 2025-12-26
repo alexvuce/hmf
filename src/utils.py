@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import partial
 import numpy as np
 import pandas as pd
 from random import sample, randint
@@ -111,6 +112,29 @@ def collate_fn(batch, D, num_n, negatives):
         torch.tensor(U, dtype=torch.long),
         torch.tensor(S, dtype=torch.long),
         torch.tensor(y, dtype=torch.float),
+    )
+
+
+def build_loader(
+        dataset: Dataset,
+        batch_size: int = 64,
+        shuffle: bool = False,
+        num_workers: int = 0,
+        drop_last: bool = True,
+        collate_fn = None,
+        collate_kwargs: dict | None = None,
+        device = None
+):    
+    if collate_fn is not None and collate_kwargs:
+        collate_fn = partial(collate_fn, **collate_kwargs)
+
+    return DataLoader(
+        dataset,
+        batch_size=batch_size // (1 + collate_kwargs['negatives']),
+        num_workers=num_workers,
+        drop_last=drop_last,
+        pin_memory=device == 'cuda',
+        collate_fn=collate_fn
     )
 
 
