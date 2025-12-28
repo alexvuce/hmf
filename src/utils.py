@@ -143,15 +143,17 @@ def regularized_loss(
     target: torch.Tensor, 
     U: torch.nn.Parameter,
     V: torch.nn.Parameter,
-    device: torch.device,
+    device: str,
     k: int, 
-    lambda_: float = 1e-5
+    lambda_: float
 ): 
     loss = binary_cross_entropy_with_logits(logits, target)
 
     eye = torch.eye(k, device=device) 
-    U_l = torch.norm(U.t() @ U - eye, p='fro')
-    V_l = torch.norm(V.t() @ V - eye, p='fro')
-    regularizer = lambda_ * (U_l + V_l)
-
-    return (loss, regularizer)
+    U_l = torch.norm(U.t() @ U - eye, p='fro').to(torch.float32)
+    V_l = torch.norm(V.t() @ V - eye, p='fro').to(torch.float32)
+    
+    if torch.any(torch.tensor([torch.isinf(U_l), torch.isinf(V_l)])):
+        return (loss, torch.tensor(1e-9, dtype=torch.float32))
+    else: 
+        return (loss, 2 * lambda_ * (U_l + V_l))
